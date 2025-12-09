@@ -41,6 +41,30 @@
 - ✅ 后续迭代建立在前序迭代基础上
 - ✅ 任何时候项目都可以停止并交付当前功能
 
+### 技术栈选型
+
+**前端技术栈**：
+- **Vite 6.x** - 极快的开发服务器和构建工具
+- **React 19** - 2025年主流版本，支持最新特性
+- **TypeScript 5.x** - 类型安全
+- **Tailwind CSS 4.x** - 实用优先的CSS框架
+- **React Hooks** - 状态管理和副作用处理
+- **react-markdown** - Markdown渲染（迭代6）
+
+**后端技术栈**：
+- **Python 3.10+** - 编程语言
+- **FastAPI** - 现代化高性能Web框架
+- **LangChain 1.0** - LLM应用开发框架
+- **LangGraph** - 智能体工作流编排（迭代6）
+- **SQLAlchemy + SQLite** - 数据持久化（迭代3）
+- **ChromaDB** - 向量数据库（迭代5）
+
+**架构特点**：
+- 🎯 **两层架构**：前端直接调用FastAPI后端，无中间层
+- 🚀 **开发体验**：Vite热更新极快，调试直观
+- 📦 **部署简单**：前端可打包成纯静态文件
+- 🔧 **易于维护**：架构清晰，职责分离
+
 ---
 
 ## 迭代1：基础对话系统（MVP）
@@ -50,13 +74,13 @@
 **用户价值**：验证AI对话的基本可行性
 
 **技术范围**：
-- Next.js前端（简化UI）
+- Vite + React 19 前端（TypeScript + Tailwind CSS）
 - 基础聊天界面（输入框+消息列表）
 - 简单的LangChain后端（直接调用LLM，无知识库）
-- 基础API通信（非流式）
+- 基础API通信（非流式，前端直接调用FastAPI）
 
 **可交付成果**：
-- 用户打开浏览器访问localhost:3000
+- 用户打开浏览器访问localhost:5173（或3000）
 - 输入高考相关问题
 - AI返回基于通用知识的回答
 
@@ -214,42 +238,44 @@ THEN: AI返回基于通用知识的回答且处于RESEARCH模式
 1. 验证macOS和Windows WSL2上Node.js 18+和Python 3.10+已安装
 2. 创建项目根目录gaokao-advisor及子目录frontend、backend
 
-**Next.js前端搭建**
-3. 在frontend目录执行npx create-next-app@latest初始化（TypeScript、Tailwind、App Router）
-4. 安装基础依赖（react、next）
-5. 创建app/page.tsx作为主聊天页面
-6. 创建components/chat/MessageList.tsx显示消息列表
-7. 创建components/chat/MessageInput.tsx处理用户输入
-8. 创建简单的CSS样式（用户消息右侧、AI消息左侧）
+**Vite + React前端搭建**
+3. 在frontend目录执行npm create vite@latest . -- --template react-ts初始化
+4. 安装基础依赖（npm install）和Tailwind CSS（npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p）
+5. 配置Tailwind CSS（tailwind.config.js和src/index.css）
+6. 创建src/pages/ChatPage.tsx作为主聊天页面
+7. 创建src/components/chat/MessageList.tsx显示消息列表
+8. 创建src/components/chat/MessageInput.tsx处理用户输入
+9. 创建简单的Tailwind样式（用户消息右侧、AI消息左侧）
 
 **后端服务搭建**
-9. 在backend目录创建Python虚拟环境
-10. 安装依赖：langchain、langchain-openai（或其他LLM）、fastapi、uvicorn
-11. 创建backend/main.py实现FastAPI入口
-12. 实现POST /chat端点，接收消息并调用LLM返回响应（非流式）
-13. 配置LLM（使用环境变量配置API key）
+10. 在backend目录创建Python虚拟环境
+11. 安装依赖：langchain、langchain-openai（或其他LLM）、fastapi、uvicorn、python-dotenv
+12. 创建backend/main.py实现FastAPI入口
+13. 实现POST /chat端点，接收消息并调用LLM返回响应（非流式）
+14. 配置CORS中间件允许前端访问
+15. 配置LLM（使用环境变量配置API key）
 
 **前后端集成**
-14. 在frontend创建app/api/chat/route.ts
-15. 实现route.ts调用backend的FastAPI服务
-16. 处理跨域配置（如需要）
-17. 在MessageInput组件实现发送消息逻辑
-18. 在MessageList组件实现消息显示逻辑
+16. 在frontend创建src/services/api.ts封装API调用
+17. 实现fetch调用backend的FastAPI服务（http://localhost:8000/chat）
+18. 在MessageInput组件实现发送消息逻辑
+19. 在MessageList组件实现消息显示逻辑
+20. 处理错误状态和加载状态
 
 **启动脚本**
-19. 编写backend/start.sh启动FastAPI（端口8000）
-20. 编写frontend/start.sh启动Next.js（端口3000）
-21. 编写start-all.sh一键启动前后端
+21. 编写backend/start.sh启动FastAPI（端口8000）
+22. 编写frontend/start.sh启动Vite开发服务器（端口5173或3000）
+23. 编写start-all.sh一键启动前后端
 
 **测试验证**
-22. 测试前端页面可以访问
-23. 测试发送消息后AI可以回复
-24. 测试macOS环境运行
-25. 测试Windows WSL2环境运行
+24. 测试前端页面可以访问（http://localhost:5173）
+25. 测试发送消息后AI可以回复
+26. 测试macOS环境运行
+27. 测试Windows WSL2环境运行
 
 **文档**
-26. 编写README.md说明迭代1的功能和启动方法
-27. 创建todo-iteration-1.md记录任务清单
+28. 编写README.md说明迭代1的功能和启动方法
+29. 创建todo-iteration-1.md记录任务清单
 
 ---
 
@@ -270,34 +296,31 @@ THEN: AI的回复从"等待后一次性显示"变为"实时逐字显示"
 ```
 
 **依赖安装**
-28. 在frontend安装Vercel AI SDK（ai包）
-29. 在backend安装流式输出相关依赖（如已包含则跳过）
+30. 在frontend安装流式处理库（如@microsoft/fetch-event-source或原生EventSource）
+31. 在backend安装SSE相关依赖（sse-starlette）
 
 **前端流式改造**
-30. 修改app/page.tsx使用useChat hook替代自定义状态管理
-31. 移除旧的消息状态管理代码
-32. 配置useChat连接到/api/chat端点
-33. MessageList自动使用useChat返回的messages
+32. 创建src/hooks/useStreamingChat.ts自定义hook管理流式状态
+33. 实现SSE（Server-Sent Events）客户端连接逻辑
+34. 实现逐token追加到消息的逻辑
+35. 修改ChatPage使用useStreamingChat hook
+36. MessageList实时显示流式更新的消息
 
 **后端流式改造**
-34. 修改backend/main.py的/chat端点返回StreamingResponse
-35. 配置LangChain的StreamingStdOutCallbackHandler
-36. 实现逐token输出到响应流
-
-**API Route流式改造**
-37. 修改app/api/chat/route.ts使用streamText处理流式响应
-38. 返回StreamingTextResponse给前端
-39. 处理流式传输的错误情况
+37. 修改backend/main.py的/chat端点返回EventSourceResponse
+38. 配置LangChain的StreamingStdOutCallbackHandler
+39. 实现逐token通过SSE发送到前端
+40. 处理流式传输的错误和结束信号
 
 **测试验证**
-40. 测试AI回复是否逐字显示
-41. 测试长回复的流式效果
-42. 测试网络中断时的错误处理
-43. 跨平台运行验证
+41. 测试AI回复是否逐字显示
+42. 测试长回复的流式效果
+43. 测试网络中断时的错误处理
+44. 跨平台运行验证
 
 **文档**
-44. 更新README.md添加迭代2功能说明
-45. 创建todo-iteration-2.md记录任务清单
+45. 更新README.md添加迭代2功能说明
+46. 创建todo-iteration-2.md记录任务清单
 
 ---
 
@@ -328,46 +351,51 @@ THEN: 之前的对话历史仍然保留并可访问
 ```
 
 **数据库设计**
-46. 设计SQLite数据库schema（sessions、messages两张表）
-47. 在frontend安装better-sqlite3
-48. 创建lib/db.ts实现数据库连接和初始化
+47. 设计SQLite数据库schema（sessions、messages两张表）
+48. 在backend安装sqlite3（Python内置）和sqlalchemy
+49. 创建backend/database/db.py实现数据库连接和初始化
+50. 创建backend/database/models.py定义Session和Message模型
 
 **数据访问层**
-49. 在lib/chat-history.ts实现createSession函数
-50. 实现getSession函数
-51. 实现getSessions函数（获取所有历史对话）
-52. 实现saveMessage函数
-53. 实现getMessages函数（获取指定session的消息）
-54. 实现deleteSession函数
+51. 在backend/database/crud.py实现create_session函数
+52. 实现get_session函数
+53. 实现get_sessions函数（获取所有历史对话）
+54. 实现save_message函数
+55. 实现get_messages函数（获取指定session的消息）
+56. 实现delete_session函数
+
+**后端API扩展**
+57. 在backend/main.py添加GET /sessions端点（获取历史对话列表）
+58. 添加POST /sessions端点（创建新对话）
+59. 添加GET /sessions/{session_id}/messages端点（获取指定对话消息）
+60. 添加DELETE /sessions/{session_id}端点（删除对话）
+61. 修改POST /chat端点保存消息到数据库
 
 **前端历史功能**
-55. 创建components/chat/Sidebar.tsx显示历史对话列表
-56. 实现新建对话按钮和逻辑
-57. 实现切换对话功能（点击历史对话加载消息）
-58. 实现删除对话功能（带确认提示）
-59. 修改app/page.tsx集成Sidebar组件
-
-**API集成**
-60. 修改app/api/chat/route.ts在每次对话时保存消息到数据库
-61. 实现会话ID管理（从请求中获取或创建新会话）
-62. 前端在useChat中传递sessionId参数
+62. 创建src/components/chat/Sidebar.tsx显示历史对话列表
+63. 创建src/services/sessionApi.ts封装会话管理API
+64. 实现新建对话按钮和逻辑
+65. 实现切换对话功能（点击历史对话加载消息）
+66. 实现删除对话功能（带确认提示）
+67. 修改ChatPage集成Sidebar组件
+68. 实现会话ID状态管理（使用React Context或Zustand）
 
 **UI优化**
-63. 实现响应式布局（侧边栏在移动端可隐藏）
-64. 添加加载状态显示
-65. 优化空状态显示（无历史对话时）
+69. 实现响应式布局（侧边栏在移动端可隐藏）
+70. 添加加载状态显示
+71. 优化空状态显示（无历史对话时）
 
 **测试验证**
-66. 测试新建对话功能
-67. 测试对话自动保存
-68. 测试切换对话后消息正确加载
-69. 测试删除对话功能
-70. 测试关闭浏览器后重新打开数据保留
-71. 跨平台运行验证
+72. 测试新建对话功能
+73. 测试对话自动保存
+74. 测试切换对话后消息正确加载
+75. 测试删除对话功能
+76. 测试关闭浏览器后重新打开数据保留
+77. 跨平台运行验证
 
 **文档**
-72. 更新README.md添加迭代3功能说明
-73. 创建todo-iteration-3.md记录任务清单
+78. 更新README.md添加迭代3功能说明
+79. 创建todo-iteration-3.md记录任务清单
 
 ---
 
@@ -398,52 +426,52 @@ THEN: 系统显示错误提示并拒绝上传
 ```
 
 **数据库扩展**
-74. 在数据库添加uploaded_files表
-75. 在lib/chat-history.ts添加saveUploadedFile函数
-76. 添加getUploadedFiles函数（获取指定session的文件）
+80. 在数据库添加uploaded_files表
+81. 在backend/database/models.py添加UploadedFile模型
+82. 在backend/database/crud.py添加save_uploaded_file函数
+83. 添加get_uploaded_files函数（获取指定session的文件）
 
 **前端上传UI**
-77. 创建components/chat/FileUpload.tsx组件
-78. 实现拖拽上传区域（使用HTML5 drag-and-drop API）
-79. 实现文件选择按钮
-80. 实现文件类型验证（.pdf/.docx/.xlsx/.pptx/.md）
-81. 实现文件大小验证（≤10MB）
-82. 显示上传进度（使用XMLHttpRequest或fetch with progress）
-83. 显示已上传文件列表（文件名、大小、删除按钮）
+84. 创建src/components/chat/FileUpload.tsx组件
+85. 实现拖拽上传区域（使用HTML5 drag-and-drop API）
+86. 实现文件选择按钮
+87. 实现文件类型验证（.pdf/.docx/.xlsx/.pptx/.md）
+88. 实现文件大小验证（≤10MB）
+89. 显示上传进度（使用XMLHttpRequest或fetch with progress）
+90. 显示已上传文件列表（文件名、大小、删除按钮）
 
 **文件上传API**
-84. 创建app/api/upload/route.ts处理文件上传
-85. 使用FormData接收文件
-86. 验证文件类型和大小
-87. 创建data/uploads/{sessionId}/目录结构
-88. 保存文件到本地文件系统
-89. 将文件信息保存到数据库
-90. 返回上传结果JSON
+91. 在backend/main.py添加POST /upload端点处理文件上传
+92. 使用FastAPI的UploadFile接收文件
+93. 验证文件类型和大小
+94. 创建backend/data/uploads/{sessionId}/目录结构
+95. 保存文件到本地文件系统
+96. 将文件信息保存到数据库
+97. 返回上传结果JSON
+98. 添加GET /sessions/{session_id}/files端点获取文件列表
+99. 添加DELETE /files/{file_id}端点删除文件
 
 **前端集成**
-91. 在app/page.tsx或ChatInterface中集成FileUpload组件
-92. 实现上传成功后刷新文件列表
-93. 实现删除已上传文件功能
-94. 在消息中显示"已上传X个文件"提示
-
-**后端准备（暂不处理文件内容）**
-95. 在backend创建utils/file_manager.py管理上传文件信息
-96. 实现获取session文件列表的接口
+100. 在ChatPage中集成FileUpload组件
+101. 创建src/services/fileApi.ts封装文件上传API
+102. 实现上传成功后刷新文件列表
+103. 实现删除已上传文件功能
+104. 在消息中显示"已上传X个文件"提示
 
 **测试验证**
-97. 测试拖拽上传功能
-98. 测试文件选择上传功能
-99. 测试各种文件格式上传
-100. 测试文件大小限制
-101. 测试非法文件类型拒绝
-102. 测试上传进度显示
-103. 测试已上传文件列表显示
-104. 测试删除文件功能
-105. 跨平台运行验证
+105. 测试拖拽上传功能
+106. 测试文件选择上传功能
+107. 测试各种文件格式上传
+108. 测试文件大小限制
+109. 测试非法文件类型拒绝
+110. 测试上传进度显示
+111. 测试已上传文件列表显示
+112. 测试删除文件功能
+113. 跨平台运行验证
 
 **文档**
-106. 更新README.md添加迭代4功能说明
-107. 创建todo-iteration-4.md记录任务清单
+114. 更新README.md添加迭代4功能说明
+115. 创建todo-iteration-4.md记录任务清单
 
 ---
 
@@ -470,68 +498,68 @@ THEN: AI的回答基于用户上传文件中的信息，提供个性化建议
 ```
 
 **依赖安装**
-108. 在backend安装文档处理库（pypdf2、python-docx、openpyxl、python-pptx）
-109. 安装向量数据库（chromadb）
-110. 安装embedding模型依赖
+116. 在backend安装文档处理库（pypdf2、python-docx、openpyxl、python-pptx）
+117. 安装向量数据库（chromadb）
+118. 安装embedding模型依赖
 
 **文档加载器实现**
-111. 创建backend/knowledge/loader.py
-112. 实现load_pdf函数（使用pypdf2）
-113. 实现load_docx函数（使用python-docx）
-114. 实现load_xlsx函数（使用openpyxl，转换为文本）
-115. 实现load_pptx函数（使用python-pptx）
-116. 实现load_markdown函数（直接读取）
-117. 实现统一的load_document函数（根据文件类型分发）
+119. 创建backend/knowledge/loader.py
+120. 实现load_pdf函数（使用pypdf2）
+121. 实现load_docx函数（使用python-docx）
+122. 实现load_xlsx函数（使用openpyxl，转换为文本）
+123. 实现load_pptx函数（使用python-pptx）
+124. 实现load_markdown函数（直接读取）
+125. 实现统一的load_document函数（根据文件类型分发）
 
 **文本处理**
-118. 创建backend/knowledge/text_processor.py
-119. 实现文本分割函数（chunk_size=1000, overlap=200）
-120. 实现文本清洗函数（去除特殊字符、多余空格）
+126. 创建backend/knowledge/text_processor.py
+127. 实现文本分割函数（chunk_size=1000, overlap=200）
+128. 实现文本清洗函数（去除特殊字符、多余空格）
 
 **向量数据库**
-121. 创建backend/knowledge/vectorstore.py
-122. 实现初始化Chroma数据库函数
-123. 实现添加文档到向量库函数
-124. 实现相似度检索函数（k=5）
-125. 配置embedding模型（如OpenAI embeddings或本地模型）
-126. 实现session级别的collection管理
+129. 创建backend/knowledge/vectorstore.py
+130. 实现初始化Chroma数据库函数
+131. 实现添加文档到向量库函数
+132. 实现相似度检索函数（k=5）
+133. 配置embedding模型（如OpenAI embeddings或本地模型）
+134. 实现session级别的collection管理
 
 **文件处理API**
-127. 在backend/main.py添加POST /process-file端点
-128. 接收文件路径和session_id
-129. 调用文档加载器解析文件
-130. 对文本进行分割
-131. 将文档chunks添加到向量数据库
-132. 返回处理结果
+135. 在backend/main.py添加POST /process-file端点
+136. 接收文件路径和session_id
+137. 调用文档加载器解析文件
+138. 对文本进行分割
+139. 将文档chunks添加到向量数据库
+140. 返回处理结果
 
 **前端调用**
-133. 修改app/api/upload/route.ts在文件保存后调用/process-file
-134. 处理文件处理的异步状态
-135. 显示"正在处理文件..."的加载提示
-136. 处理完成后提示用户"文件已加入知识库"
+141. 修改src/services/fileApi.ts在文件上传成功后自动调用/process-file
+142. 处理文件处理的异步状态
+143. 显示"正在处理文件..."的加载提示
+144. 处理完成后提示用户"文件已加入知识库"
 
 **RAG实现**
-137. 修改backend/main.py的/chat端点集成检索逻辑
-138. 在接收消息后先进行向量检索
-139. 将检索结果格式化为上下文
-140. 将上下文注入到LLM的prompt中
-141. 调整prompt模板以更好利用检索内容
+145. 修改backend/main.py的/chat端点集成检索逻辑
+146. 在接收消息后先进行向量检索
+147. 将检索结果格式化为上下文
+148. 将上下文注入到LLM的prompt中
+149. 调整prompt模板以更好利用检索内容
 
 **测试验证**
-142. 测试上传PDF后文件内容被正确解析
-143. 测试上传Word文档解析
-144. 测试上传Excel文档解析
-145. 测试上传PPT文档解析
-146. 测试上传Markdown文档解析
-147. 测试向量检索返回相关内容
-148. 测试AI回答中包含文件内容
-149. 测试询问"我上传的文件说了什么"类问题
-150. 测试多个文件上传后的综合检索
-151. 跨平台运行验证
+150. 测试上传PDF后文件内容被正确解析
+151. 测试上传Word文档解析
+152. 测试上传Excel文档解析
+153. 测试上传PPT文档解析
+154. 测试上传Markdown文档解析
+155. 测试向量检索返回相关内容
+156. 测试AI回答中包含文件内容
+157. 测试询问"我上传的文件说了什么"类问题
+158. 测试多个文件上传后的综合检索
+159. 跨平台运行验证
 
 **文档**
-152. 更新README.md添加迭代5功能说明
-153. 创建todo-iteration-5.md记录任务清单
+160. 更新README.md添加迭代5功能说明
+161. 创建todo-iteration-5.md记录任务清单
 
 ---
 
@@ -562,87 +590,88 @@ THEN: AI明确标识当前所处的模式（RESEARCH/INNOVATE/PLAN/EXECUTE/REVIE
 ```
 
 **依赖安装**
-154. 确认langgraph已安装（应在之前已安装）
+162. 确认langgraph已安装（应在之前已安装）
 
 **State设计**
-155. 创建backend/agents/state.py定义State类
-156. 定义字段：user_input、chat_history、user_info、retrieved_docs、recommendations、report
+163. 创建backend/agents/state.py定义State类
+164. 定义字段：user_input、chat_history、user_info、retrieved_docs、recommendations、report
 
 **节点实现**
-157. 创建backend/agents/nodes.py
-158. 实现intent_recognition节点（识别用户意图：提供信息/询问问题/请求推荐）
-159. 实现info_collection节点（收集用户成绩、兴趣、地域偏好等）
-160. 实现knowledge_retrieval节点（从向量库检索相关专业信息）
-161. 实现major_matching节点（根据用户信息匹配合适专业）
-162. 实现report_generation节点（生成Markdown格式推荐报告）
+165. 创建backend/agents/nodes.py
+166. 实现intent_recognition节点（识别用户意图：提供信息/询问问题/请求推荐）
+167. 实现info_collection节点（收集用户成绩、兴趣、地域偏好等）
+168. 实现knowledge_retrieval节点（从向量库检索相关专业信息）
+169. 实现major_matching节点（根据用户信息匹配合适专业）
+170. 实现report_generation节点（生成Markdown格式推荐报告）
 
 **工作流定义**
-163. 创建backend/agents/workflow.py
-164. 定义StateGraph
-165. 添加所有节点到图
-166. 定义条件边（根据意图路由到不同节点）
-167. 定义普通边（节点间的顺序连接）
-168. 设置入口节点和结束条件
-169. 编译工作流
+171. 创建backend/agents/workflow.py
+172. 定义StateGraph
+173. 添加所有节点到图
+174. 定义条件边（根据意图路由到不同节点）
+175. 定义普通边（节点间的顺序连接）
+176. 设置入口节点和结束条件
+177. 编译工作流
 
 **集成到主服务**
-170. 修改backend/main.py的/chat端点使用LangGraph工作流
-171. 将用户消息传入工作流State
-172. 执行工作流并获取输出
-173. 保持流式输出能力（使用LangGraph的streaming）
+178. 修改backend/main.py的/chat端点使用LangGraph工作流
+179. 将用户消息传入工作流State
+180. 执行工作流并获取输出
+181. 保持流式输出能力（使用LangGraph的streaming）
 
 **报告模板**
-174. 创建backend/templates/report_template.py
-175. 定义Markdown报告结构（标题、个人情况、推荐专业、院校选择、理由分析）
-176. 实现报告生成函数
+182. 创建backend/templates/report_template.py
+183. 定义Markdown报告结构（标题、个人情况、推荐专业、院校选择、理由分析）
+184. 实现报告生成函数
 
 **前端优化**
-177. 优化MessageList对Markdown的渲染（使用react-markdown）
-178. 添加代码高亮支持（如报告中有代码块）
-179. 添加表格渲染支持
-180. 优化长报告的显示（折叠/展开）
+185. 安装react-markdown和相关依赖（npm install react-markdown remark-gfm）
+186. 优化MessageList对Markdown的渲染（使用react-markdown）
+187. 添加代码高亮支持（安装react-syntax-highlighter）
+188. 添加表格渲染支持（配置remark-gfm）
+189. 优化长报告的显示（实现折叠/展开功能）
 
 **引导式对话**
-181. 实现AI主动提问机制（"请告诉我你的高考分数"）
-182. 实现信息确认环节（"确认你的信息：分数XXX，兴趣XXX"）
-183. 实现报告生成触发（用户说"生成推荐"或收集完信息后自动触发）
+190. 实现AI主动提问机制（"请告诉我你的高考分数"）
+191. 实现信息确认环节（"确认你的信息：分数XXX，兴趣XXX"）
+192. 实现报告生成触发（用户说"生成推荐"或收集完信息后自动触发）
 
 **测试验证**
-184. 测试完整对话流程（从打招呼到生成报告）
-185. 测试AI能识别不同意图
-186. 测试信息收集过程的完整性
-187. 测试知识检索集成到推荐中
-188. 测试报告格式正确性
-189. 测试报告内容相关性和准确性
-190. 测试中断后重新开始的处理
-191. 跨平台运行验证
+193. 测试完整对话流程（从打招呼到生成报告）
+194. 测试AI能识别不同意图
+195. 测试信息收集过程的完整性
+196. 测试知识检索集成到推荐中
+197. 测试报告格式正确性
+198. 测试报告内容相关性和准确性
+199. 测试中断后重新开始的处理
+200. 跨平台运行验证
 
 **文档**
-192. 更新README.md添加迭代6功能说明
-193. 创建todo-iteration-6.md记录任务清单
-194. 编写完整的用户使用指南
-195. 编写开发者文档说明架构和扩展方法
+201. 更新README.md添加迭代6功能说明
+202. 创建todo-iteration-6.md记录任务清单
+203. 编写完整的用户使用指南
+204. 编写开发者文档说明架构和扩展方法
 
 ---
 
-## 迭代清单（195个任务）
+## 迭代清单（204个任务）
 
-### 迭代1：基础对话系统（27个任务）
+### 迭代1：基础对话系统（29个任务）
 **交付价值**：用户可以与AI对话，验证基本可行性
 
-### 迭代2：流式输出体验（18个任务）
+### 迭代2：流式输出体验（17个任务）
 **交付价值**：AI回复实时逐字显示，体验升级
 
-### 迭代3：对话历史持久化（28个任务）
+### 迭代3：对话历史持久化（33个任务）
 **交付价值**：对话永久保存，可以查看历史
 
-### 迭代4：文件上传功能（34个任务）
+### 迭代4：文件上传功能（36个任务）
 **交付价值**：可以上传成绩单等文件
 
 ### 迭代5：知识库RAG集成（46个任务）
 **交付价值**：AI基于上传文件内容回答
 
-### 迭代6：LangGraph工作流（42个任务）
+### 迭代6：LangGraph工作流（43个任务）
 **交付价值**：结构化专业推荐报告
 
 ---
