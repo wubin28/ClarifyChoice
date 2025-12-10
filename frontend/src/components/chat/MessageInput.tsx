@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react';
+import { useState, KeyboardEvent, memo } from 'react';
 
 console.log('[ClarifyChoice] MessageInput组件加载');
 
@@ -8,7 +8,7 @@ interface MessageInputProps {
   isLoading: boolean;
 }
 
-export function MessageInput({ onSend, disabled, isLoading }: MessageInputProps) {
+export const MessageInput = memo(function MessageInput({ onSend, disabled, isLoading }: MessageInputProps) {
   console.log('[ClarifyChoice] MessageInput组件渲染，disabled:', disabled, 'isLoading:', isLoading);
   const [input, setInput] = useState('');
   const [error, setError] = useState('');
@@ -65,4 +65,4 @@ export function MessageInput({ onSend, disabled, isLoading }: MessageInputProps)
       </div>
     </div>
   );
-}
+});

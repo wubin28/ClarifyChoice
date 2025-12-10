@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, memo } from 'react';
 import type { Message } from '../../types/index';
 import { formatTimestamp } from '../../utils/formatTime';
 
@@ -8,7 +8,7 @@ interface MessageListProps {
   messages: Message[];
 }
 
-export function MessageList({ messages }: MessageListProps) {
+export const MessageList = memo(function MessageList({ messages }: MessageListProps) {
   console.log('[ClarifyChoice] MessageList组件渲染，消息数量:', messages.length);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +18,7 @@ export function MessageList({ messages }: MessageListProps) {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="p-4 space-y-4">
       {messages.map((message) => (
         <div
           key={message.id}
@@ -59,4 +59,4 @@ export function MessageList({ messages }: MessageListProps) {
       <div ref={messagesEndRef} />
     </div>
   );
-}
+});
