@@ -1,12 +1,22 @@
 import os
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
 # 全局变量存储API密钥
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+logger.info(f"DeepSeek API Key已{'设置' if DEEPSEEK_API_KEY else '未设置'}")
 
 # RIPER-5系统提示词
 SYSTEM_PROMPT = """
@@ -1466,6 +1476,7 @@ n. [最终操作]
 
 # 创建FastAPI应用
 app = FastAPI()
+logger.info("FastAPI应用已创建")
 
 # 配置CORS
 app.add_middleware(
@@ -1475,6 +1486,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+logger.info("CORS中间件已配置，允许来源: http://localhost:5173")
 
 # 请求模型
 class ChatRequest(BaseModel):
@@ -1487,34 +1499,50 @@ class ChatResponse(BaseModel):
 # /chat端点
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    logger.info("=" * 80)
+    logger.info(f"收到聊天请求，消息长度: {len(request.message)}")
+    logger.info(f"消息内容（前100字符）: {request.message[:100]}...")
+
     try:
         # 检查API Key
         if not DEEPSEEK_API_KEY:
+            logger.error("DeepSeek API Key未设置")
             raise HTTPException(
                 status_code=500,
                 detail="DeepSeek API Key未设置"
             )
 
+        logger.info("开始创建ChatOpenAI实例")
         # 创建ChatOpenAI实例
         llm = ChatOpenAI(
             openai_api_key=DEEPSEEK_API_KEY,
             openai_api_base="https://api.deepseek.com",
             model_name="deepseek-reasoner"
         )
+        logger.info("ChatOpenAI实例创建成功")
 
         # 构建消息列表
+        logger.info("构建消息列表（系统提示词 + 用户消息）")
         messages = [
             SystemMessage(content=SYSTEM_PROMPT),
             HumanMessage(content=request.message)
         ]
+        logger.info(f"系统提示词长度: {len(SYSTEM_PROMPT)}")
 
         # 调用LLM
+        logger.info("开始调用DeepSeek API...")
         response = llm.invoke(messages)
+        logger.info(f"DeepSeek API调用成功，响应长度: {len(response.content)}")
+        logger.info(f"响应内容（前200字符）: {response.content[:200]}...")
 
         # 返回响应
+        logger.info("返回响应到前端")
+        logger.info("=" * 80)
         return ChatResponse(response=response.content)
 
     except Exception as e:
+        logger.error(f"处理请求时发生错误: {str(e)}", exc_info=True)
+        logger.info("=" * 80)
         raise HTTPException(
             status_code=500,
             detail=f"API调用失败：{str(e)}"

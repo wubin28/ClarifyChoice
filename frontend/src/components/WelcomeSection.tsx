@@ -1,4 +1,8 @@
+console.log('[ClarifyChoice] WelcomeSection组件加载');
+
 export function WelcomeSection() {
+  console.log('[ClarifyChoice] WelcomeSection组件渲染');
+
   const welcomeText = `我是【2025年刚完成高考的高中生】，想让AI帮我【生成高考志愿专业填报建议】，以便【让我通过你的分析能从推荐的专业中做出明智选择】。
 
 对话流程：我和AI将依次经历4个模式，需明确输入指令才能进入下一模式。

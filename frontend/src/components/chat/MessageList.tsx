@@ -1,15 +1,19 @@
 import { useRef, useEffect } from 'react';
-import { Message } from '../../types';
+import type { Message } from '../../types/index';
 import { formatTimestamp } from '../../utils/formatTime';
+
+console.log('[ClarifyChoice] MessageList组件加载');
 
 interface MessageListProps {
   messages: Message[];
 }
 
 export function MessageList({ messages }: MessageListProps) {
+  console.log('[ClarifyChoice] MessageList组件渲染，消息数量:', messages.length);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log('[ClarifyChoice] MessageList - 消息列表更新，滚动到底部');
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
