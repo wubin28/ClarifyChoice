@@ -109,7 +109,7 @@ THEN: AI返回基于通用知识的回答且处于RESEARCH模式
 
 **环境准备**
 1. 验证macOS和Windows WSL2上Node.js 18+和Python 3.10+已安装
-2. 创建项目根目录gaokao-advisor及子目录frontend、backend
+2. 创建项目根目录ClarifyChoice及子目录frontend、backend
 
 **Vite + React前端搭建**
 3. 在frontend目录执行npm create vite@latest . -- --template react-ts初始化
