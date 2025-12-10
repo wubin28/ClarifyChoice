@@ -24,6 +24,15 @@ fi
 echo "安装Python依赖..."
 pip install -r requirements.txt
 
+# 检测操作系统并在Linux（WSL2）上安装httpx[socks]
+OS_TYPE=$(uname -s)
+if [ "$OS_TYPE" = "Linux" ]; then
+    echo "检测到Linux系统（WSL2），安装httpx[socks]..."
+    pip install httpx[socks]
+else
+    echo "检测到非Linux系统（可能是macOS），跳过httpx[socks]安装"
+fi
+
 # 使用getpass提示输入API Key
 echo ""
 echo "请输入DeepSeek API Key（输入时不会显示）："
