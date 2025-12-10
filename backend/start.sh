@@ -1,0 +1,46 @@
+#!/bin/bash
+
+echo "========================================"
+echo "启动ClarifyChoice后端服务"
+echo "========================================"
+
+# 检查并创建虚拟环境
+if [ ! -d ".venv" ]; then
+    echo "创建Python虚拟环境..."
+    python3 -m venv .venv
+fi
+
+# 激活虚拟环境
+echo "激活虚拟环境..."
+source .venv/bin/activate
+
+# 检查requirements.txt是否存在
+if [ ! -f "requirements.txt" ]; then
+    echo "错误：requirements.txt文件不存在！"
+    exit 1
+fi
+
+# 安装依赖
+echo "安装Python依赖..."
+pip install -r requirements.txt
+
+# 使用getpass提示输入API Key
+echo ""
+echo "请输入DeepSeek API Key（输入时不会显示）："
+read -s DEEPSEEK_API_KEY
+export DEEPSEEK_API_KEY
+
+# 检查API Key是否已设置
+if [ -z "$DEEPSEEK_API_KEY" ]; then
+    echo "错误：API Key未设置！"
+    exit 1
+fi
+
+echo ""
+echo "API Key已设置"
+echo "========================================"
+echo "启动FastAPI服务器（端口8000）..."
+echo "========================================"
+
+# 启动uvicorn
+uvicorn main:app --reload --port 8000
