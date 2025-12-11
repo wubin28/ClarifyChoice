@@ -33,16 +33,26 @@ else
     echo "检测到非Linux系统（可能是macOS），跳过httpx[socks]安装"
 fi
 
-# 使用getpass提示输入API Key
-echo ""
-echo "请输入DeepSeek API Key（输入时不会显示）："
-read -s DEEPSEEK_API_KEY
-export DEEPSEEK_API_KEY
+# 检查.env文件是否存在并加载
+if [ -f ".env" ]; then
+    echo "检测到.env文件，正在加载环境变量..."
+    export $(grep -v '^#' .env | xargs)
+    echo "环境变量已从.env加载"
+else
+    echo "未找到.env文件"
+fi
 
-# 检查API Key是否已设置
+# 如果API Key仍未设置，提示用户输入
 if [ -z "$DEEPSEEK_API_KEY" ]; then
-    echo "错误：API Key未设置！"
-    exit 1
+    echo ""
+    echo "请输入DeepSeek API Key（输入时不会显示）："
+    read -s DEEPSEEK_API_KEY
+    export DEEPSEEK_API_KEY
+
+    if [ -z "$DEEPSEEK_API_KEY" ]; then
+        echo "错误：API Key未设置！"
+        exit 1
+    fi
 fi
 
 echo ""
