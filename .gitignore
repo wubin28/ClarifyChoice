@@ -110,3 +110,6 @@ $RECYCLE.BIN/
 *.zip
 *.tar.gz
 *.rar
+
+# Server info
+server-info.txt
