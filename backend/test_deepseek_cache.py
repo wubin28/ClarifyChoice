@@ -3,14 +3,16 @@ import time
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
-# 运行方法：
+# macOS iTerm2 zsh 运行方法：
 #   cd backend
-#   python -m venv .venv
-#   source .venv/bin/activate
+#   python3 -m venv .venv
+#   source ./.venv/bin/activate
 #   which python
-#   pip install langchain-openai langchain-core
+#   pip install --upgrade pip
+#   pip install -r requirements.txt
 #   export DEEPSEEK_API_KEY="your-api-key"
 #   python test_deepseek_cache.py
+#   deactivate
 #
 # 结果判断：
 #   1. 响应时间判断（初步）：
@@ -28,11 +30,11 @@ DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
 # 创建一个大的系统提示词（模拟十四五规划）
 LARGE_SYSTEM_PROMPT = "这是一个测试系统提示词。" * 5000  # 约50,000 tokens
 
-# 初始化LLM
+# 初始化LLM (使用 langchain v1.0 的参数命名)
 llm = ChatOpenAI(
-    openai_api_key=DEEPSEEK_API_KEY,
-    openai_api_base="https://api.deepseek.com",
-    model_name="deepseek-reasoner"
+    api_key=DEEPSEEK_API_KEY,
+    base_url="https://api.deepseek.com",
+    model="deepseek-reasoner"
 )
 
 print("=== DeepSeek Prompt Caching 测试 ===\n")
